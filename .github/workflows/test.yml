@@ -34,5 +34,3 @@ jobs:
         uses: nihar30/simple-java-maven-app/.github/actions/print_env_var@master
         with:
          variable-to-print: ${{ github.sha }}        
-
-has context
