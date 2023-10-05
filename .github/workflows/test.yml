@@ -1,36 +1,10 @@
-name: Main Pipeline
-on:
-  push:
-   branches:
-      - main
+name: example
+
+on: push
 
 jobs:
-  build_and_upload:
-    runs-on: ubuntu-latest 
-
+  job_1:
+    runs-on: ubuntu-latest
     steps:
-    ######## Checkout code ########
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: set up Java
-        uses: actions/setup-java@v2
-        with:
-          java-version: '11'
-
-      ######## Build - ANT ########       
-      - name: Build with Ant
-        run: ant -noinput -buildfile build.xml
-
- 
-
-      - name: 'Upload Artifact'
-        uses: actions/upload-artifact@v2.2.3
-        with:
-            name: Jars
-            path: /home/runner/work/java-junit-template-project/java-junit-template-project/lib/org.jacoco.ant-0.8.7.jar!/org/jacoco/ant/antlib.xml
-
-      - name: Print Variables
-        uses: nihar30/simple-java-maven-app/.github/actions/print_env_var@master
-        with:
-         variable-to-print: ${{ github.sha }}        
+      - name: My first step
+        run: echo This is the first step of my first job.
