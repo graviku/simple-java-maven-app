@@ -1,35 +1,85 @@
+name: example-basic
+# This workflow represents a set of basic End-to-End tests
 on:
   push:
-   branches:
-      - main
+    branches:
+      - 'master'
+  pull_request:
+  workflow_dispatch:
 
 jobs:
-  build_and_upload:
-    runs-on: ubuntu-latest 
 
+  basic-ubuntu-20:
+    runs-on: ubuntu-20.04
     steps:
-    ######## Checkout code ########
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: set up Java
-        uses: actions/setup-java@v2
+      - name: Cypress tests
+        # normally you would write
+        # uses: cypress-io/github-action@v6
+        uses: ./
+        # the parameters below are only necessary
+        # because we are running these examples in a monorepo
         with:
-          java-version: '11'
+          working-directory: examples/basic
+          # just for full picture after installing Cypress
+          # print information about detected browsers, etc
+          # see https://on.cypress.io/command-line#cypress-info
+          build: npx cypress info
 
-      ######## Build - ANT ########       
-      - name: Build with Ant
-        run: ant -noinput -buildfile build.xml
+  basic-ubuntu-22:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
- 
-
-      - name: 'Upload Artifact'
-        uses: actions/upload-artifact@v2.2.3
+      - name: Cypress tests
+        uses: ./
         with:
-            name: Jars
-            path: /home/runner/work/java-junit-template-project/java-junit-template-project/lib/org.jacoco.ant-0.8.7.jar!/org/jacoco/ant/antlib.xml
+          working-directory: examples/basic
+          build: npx cypress info
 
-      - name: Print Variables
-        uses: nihar30/simple-java-maven-app/.github/actions/print_env_var@master
+  basic-on-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cypress tests
+        uses: ./
         with:
-         variable-to-print: ${{ github.sha }} 
+          working-directory: examples/basic
+          build: npx cypress info
+
+  basic-on-mac:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/basic
+          build: npx cypress info
+
+  # skips the binary installation
+  # shows that the job should not fail
+  # https://github.com/cypress-io/github-action/issues/327
+  basic-without-binary-install:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cypress tests
+        uses: ./
+        with:
+          working-directory: examples/basic
+          # since we do not install Cypress
+          # we should not attempt to run tests
+          runTests: false
+        env:
+          # skip the binary install
+          CYPRESS_INSTALL_BINARY: 0
